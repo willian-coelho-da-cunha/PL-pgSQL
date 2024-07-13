@@ -1,0 +1,50 @@
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+
+    volumes:
+      - ../..:/workspaces:cached
+
+    # Overrides default command so things don't shut down after the process ends.
+    command: sleep infinity
+
+    # Runs app on the same network as the database container, allows "forwardPorts" in devcontainer.json function.
+    network_mode: service:db
+    
+    # Uncomment to connect as root instead. More info: https://aka.ms/dev-containers-non-root.
+    # user: root
+
+    # Use "forwardPorts" in **devcontainer.json** to forward an app port locally. 
+    # (Adding the "ports" property to this file will not forward from a Codespace.)
+
+  db:
+    image: postgres:14.3
+    restart: unless-stopped
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_PASSWORD_FILE: /run/secrets/db_password
+      POSTGRES_USER_FILE: /run/secrets/db_user
+      POSTGRES_DB_FILE: /run/secrets/db_db
+    secrets:
+      - db_password
+      - db_user
+      - db_db
+      
+    # Add "forwardPorts": ["5432"] to **devcontainer.json** to forward PostgreSQL locally.
+    # (Adding the "ports" property to this file will not forward from a Codespace.)
+
+secrets:
+  db_password:
+    file: db_password.txt
+  db_user:
+    file: db_user.txt
+  db_db:
+    file: db_db.txt
+
+volumes:
+  postgres-data:

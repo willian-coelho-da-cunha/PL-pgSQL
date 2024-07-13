@@ -1,0 +1,7 @@
+# Code workspace
+.devcontainer/**.code-workspace
+
+# Secrets files
+.devcontainer/db_password.txt
+.devcontainer/db_user.txt
+.devcontainer/db_db.txt
